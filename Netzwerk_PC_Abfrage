@@ -1,0 +1,46 @@
+#Version 1.0
+# 
+#Netzwerkpc_Infos_1_0, Cedric Bühler, 08.09.2021
+#
+<#
+Das ganze Skript dient dazu, Infos von PC abzufragen, die im gleichen Netz sind. Man kann einfach im Powershell den Pfad vom Skript -datei <Dateipfad> anhängen.
+Es gibt diverse Infos über die Abgefragten PC. Wichtig ist, dass man die .txt datei richtig Schreib. Als Beispiel: PC-Muster; Herr Mustermann. Den das skript zerscheidet das .txt,
+PC-Muster und Herr Mustermann und fügt dann nur PC-Muster am richtigen Ort ein.
+Was bekommt man für Infos?
+Über die CPU, BIOS, PC-System,PC-Generell, wie viele Festplatten Typen verbaut sind, Festplatten Infos wo verbaut sind und die Installierten Programme.
+#>
+# Hier wird der Parameter Erstellt, wo gleichzeitig dann noch das Dokument abfragt wo man ausfüren will.
+param (
+[Parameter(Mandatory=$true)]$datei)
+# Hier wird das File gelsesen und ausgefüher (pc_test.txt)
+$FILE = Get-Content "$datei"
+foreach ($LINE in $FILE)
+{
+#Mit der Zeile wird die LINE gesteilt ab dem (;)
+$pc = $LINE.Substring(0,$LINE.IndexOf(";"))
+#Der Befehl,dass der Skriptblock auf den Andren PC ausgeführt wird
+Invoke-Command -ComputerName $pc -ScriptBlock{
+# Für CPU-Infos
+Get-CimInstance -ClassName Win32_Processor | Select-Object -ExcludeProperty "CIM*"
+# Für BIOS-Infos
+Get-CimInstance Win32_BIOS
+
+# Für PC-System-Infos
+Get-CimInstance -ClassName Win32_ComputerSystem
+
+# Für PC-Infos
+Get-CimInstance -ClassName Win32_OperatingSystem |
+    Select-Object -Property BuildNumber,BuildType,OSType,ServicePackMajorVersion,ServicePackMinorVersion
+
+#Infos wie viele Festplatten verbaut sind. FriendlyName (z.b. Samsung Evo 860 QVO) zugleich welchesr MediaType (3=HDD, 4=SSD, 0=USB)
+Get-WmiObject -Class MSFT_PhysicalDisk -Namespace root\Microsoft\Windows\Storage | Select FriendlyName, MediaType
+
+# Festplatten-Info: DrivType:0 = Unbekannt | 1 = Kein Root-Verzeichnis | 2 = Abnehmbar Disk | 3=Lokale Disk | 4 = Netzlaufwerk | 5 = CD | 6 = RAM Disk
+Get-WmiObject -Class Win32_logicaldisk
+
+   # Das man die Installierten Programme sieht
+   $INSTALLED = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |  Select-Object DisplayName, DisplayVersion, Publisher, InstallDate
+   $INSTALLED += Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate
+   $INSTALLED | ?{ $_.DisplayName -ne $null } | sort-object -Property DisplayName -Unique | Format-Table -AutoSize
+   }
+}
