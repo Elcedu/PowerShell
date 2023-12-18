@@ -1,0 +1,25 @@
+#Version 1.0
+#
+#restore_projekt_1_v_0_1, Cedric Bühler, 13.11.2023
+#
+#Das ist ein IncrementalBackup Skript, dass man selbst von den Pfaden Ã¤ndern kann und ausfÃ¼hren.
+#Das ganze dient als Projekt und erstelle ein Backup von den angegeben Pfad der Aufgabe
+#
+# Der erste Pfad ist der Ort, von wo das BackUp gemacht werden soll, der 2te Pfad ist der Ort, wo das BackUp hin kommt.
+# Wichtig ist, dass man die Pfade in ("") einfügt und die nicht vergisst, weil sonst klapt es nicht.
+
+#Copy von den Userprofil
+robocopy "D:\Projekt_1\User" "C:\Users\Admin"  /M /E /COPY:DAT /V /R:0 /W:0 /NP
+ 
+
+#Copy von C:\daten
+robocopy "D:\Projekt_1\Daten" "C:\daten" /M /E /COPY:DAT /V /R:0 /W:0 /NP 
+
+#Copy von GIMP
+robocopy "D:\Projekt_1\GIMP" "C:\GIMP 2" /M /E /COPY:DAT /V /R:0 /W:0 /NP 
+
+
+<# Emails versendet ueber outlook.com, muss mich nur mit dem Benutzer anmelden
+#>
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+Send-MailMessage -To "cedric.buehler@student.ipso.ch" -From "cedric.j.buehler@hotmail.com" -Subject "Restore" -Body "restore skript ist durchgelaufen!!!" -SmtpServer "smtp.office365.com" -Port 587 -UseSsl -Credential (Get-Credential)
