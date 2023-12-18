@@ -1,0 +1,25 @@
+#Version 1.0.2
+#
+#backup_projekt_1_0_2, Cedric Bühler, 13.11.2023
+#
+#Das ist ein IncrementalBackup Skript, dass man selbst von den Pfaden Ã¤ndern kann und ausfÃ¼hren.
+#Das ganze dient als Projekt und erstelle ein Backup von den angegeben Pfad der Aufgabe
+#
+# Der erste Pfad ist der Ort, von wo das BackUp gemacht werden soll, der 2te Pfad ist der Ort, wo das BackUp hin kommt.
+# Wichtig ist, dass man die Pfade in ("") einfügt und die nicht vergisst, weil sonst klapt es nicht.
+
+
+#Copy von den Userprofil
+robocopy "$env:UserProfile" "D:\Projekt_1\User" /mir /R:0 /W:0 /LOG+:D:\Projekt_1\Sicherungslogs\Admin.txt
+
+#Copy von C:\daten
+robocopy "C:\daten" "D:\Projekt_1\Daten" /mir /R:0 /W:0 /LOG+:D:\Projekt_1\Sicherungslogs\Daten.txt
+
+#Copy von GIMP
+robocopy "C:\GIMP 2" "D:\Projekt_1\GIMP" /mir /R:0 /W:0 /LOG+:D:\Projekt_1\Sicherungslogs\GIMP.txt
+
+
+<# Emails versendet ueber outlook.com, muss mich nur mit dem Benutzer anmelden
+#>
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+Send-MailMessage -To "cedric.buehler@student.ipso.ch" -From "cedric.j.buehler@hotmail.com" -Subject "Backup" -Body "Backup skript ist durchgelaufen!!!" -SmtpServer "smtp.office365.com" -Port 587 -UseSsl -Credential (Get-Credential)
