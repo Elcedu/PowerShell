@@ -1,0 +1,113 @@
+#Löschen von Daten mit Schleife
+#Version 1.0
+#loeschen_Daten_Schleife_1_0, Autor: Cedric Bühler, Erstellt:15.12.2023
+#
+#
+# Skript für Daten löschung von den Service Worker\CacheStorage die in AppData versteckt sind
+# Es ist alles mit Variablen erstellt, so dass man im Skript nichts anpassen muss sondern nur bei den Variablen die Anpassungen machen kann.
+#Version für 1mal die Woche für alle User
+#!!WICHTIG!! Skript ausführen im Ordner von C:\Users
+
+#-----------------------------------------------
+#Variablen setzten
+
+#Userprofil Pfad 
+$UPfad = $($env:UserProfile)
+$UName = $($env:USERNAME)
+$BPfad = "C:\Users\"
+$GetDate = Get-Date -Format "dd_MM_yyyy"
+
+#-----------------------------------------------
+
+#Variable für Log
+
+#Path für die Logdaten
+$LogData = "$UPfad\Desktop\Log\Admin\Schleife_$GetDate.txt"
+
+#Pfad für den User Ordner
+$LogFolder = "C:\Users\Admin\Desktop\Log"
+
+# Erstelle das Verzeichnis, wenn es nicht existiert, mit dem Namen des User
+New-Item -ItemType Directory -Force -Path $LogFolder
+
+#-----------------------------------------------
+
+# Benutzernamen abfragen
+$Bname = Get-ChildItem -Name
+
+#-----------------------------------------------
+#Starten von der Aufnahme für Command-Line-Ausgabe
+start-transcript "$LogData"
+
+#-----------------------------------------------
+#Schleife für die User
+ForEach ($AusName in $BPfad){
+
+#-----------------------------------------------
+#Pfad von den Ordner
+#Chrome Pfad
+$ChromePath = "$AusName\AppData\Local\Google\Chrome\User Data\Default\Service Worker\CacheStorage\*"
+#Opera Pfad
+$OperaPath = "$AusName\AppData\Roaming\Opera Software\Opera GX Stable\Service Worker\CacheStorage\*"
+#Edge Pfad
+$EdgePath = "$AusName\AppData\Local\Microsoft\Edge\User Data\Default\Service Worker\CacheStorage\*"
+
+#-----------------------------------------------
+#Variable für die Texte
+
+#Text, wenn der Ordner vorhanden ist oder Inhalt vorhanden ist bei Chrome
+$ChromeFolderTrue = "Der Inhalt vom CacheStorage von Chrome wurde gelöscht bei $AusName"
+
+#Text, wenn der Ordner vorhanden ist oder Inhalt vorhanden ist bei Chrome
+$OperaFolderTrue = "Der Inhalt vom CacheStorage von Opera wurde gelöscht bei $AusName"
+
+#Text, wenn der Ordner vorhanden ist oder Inhalt vorhanden ist bei Chrome
+$EdgeFolderTrue = "Der Inhalt vom CacheStorage von Edge wurde gelöscht bei $AusName"
+
+#Text, wenn der Ordner nicht vorhanden ist oder keinen Inhalt vorhanden ist
+$ChromeFolderFalse = "Der Ordner von Chrome ist nicht vorhanden oder ist Leer bei $AusName"
+
+#Text, wenn der Ordner nicht vorhanden ist oder keinen Inhalt vorhanden ist
+$OperaFolderFalse = "Der Ordner vom Opera ist nicht vorhanden oder ist Leer bei $AusName"
+
+#Text, wenn der Ordner nicht vorhanden ist oder keinen Inhalt vorhanden ist
+$EdgeFolderFalse = "Der Ordner vom Edge ist nicht vorhanden oder ist Leer bei $AusName"
+
+
+#-----------------------------------------------
+
+#Skript Block
+
+#Testen ob der Pfad vorhanden ist von Chrome
+if ( Test-Path $ChromePath )
+{
+    Write-Output "$ChromeFolderTrue"
+
+#löschen von CacheStorage / Chrome (Local)
+Remove-Item -Path $ChromePath -r -Force
+}
+else {Write-Host "$ChromeFolderFalse"}
+
+#Testen ob der Pfad vorhanden ist von Opera
+if ( Test-Path $OperaPath )
+{
+    Write-Output "$OperaFolderTrue"
+#löschen von CacheStorage / Opera (Romaning)
+Remove-Item -Path $OperaPath -r -Force
+}
+else{Write-Host "$OperaFolderFalse"}
+
+#Testen ob der Pfad vorhanden ist von Edge
+if ( Test-Path $EdgePath )
+{
+    Write-Output "$EdgeFolderTrue"
+#löschen von CacheStorage / Edge (Local)
+Remove-Item -Path $EdgePath -r -Force
+}
+else{Write-Host "$EdgeFolderFalse"}
+
+
+}
+
+
+stop-transcript
