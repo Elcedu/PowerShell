@@ -1,0 +1,65 @@
+# Ist ein Skript fuer die Userdaten Uebertragung von einem Alten System zu einem Neuen System
+#Copy_Userdaten.ps1 / Version 0_3 / Autor: Cedric Buehler
+#zuletzt geändert: 24.11.2023 / Logpfad für Administrato hinzugefügt mit Variale
+
+#Autor: Cedric Buehler
+#Erstellt am 22.11.2023
+
+#!!! WICHTIG !!!
+#Falls man keine skript ausführen kann beim Client, muss man folgendes Ausführen:
+#Wichtig, PowerShell als Administrator ausführen
+#Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
+#Dies kann man Kopieren und in PowerShell einfügen, aber aufpassen, man kann dann alle Skript ausführen
+
+#Path fuer Datenuebertragung
+$DataPath = "\\LAB1\Backup_alt"
+
+# Ordner fuer Datenuebertragung
+$DataFolder = "$DataPath\$($env:USERNAME)"
+
+#Path für die Logdaten
+$LogData = "C:\Logdaten\$($env:USERNAME)"
+
+#Datum mit Uhrzeit angeben fuer die Logs
+$GetDate = Get-Date -Format "HH:mm dd:MM:yyyy"
+
+# Erstelle das Verzeichnis, wenn es nicht existiert, mit dem Namen des User
+New-Item -ItemType Directory -Force -Path $DataFolder
+
+# Datencopy von Dokumente
+Copy-Item -Path "C:\Users\$($env:USERNAME)\Documents" -Destination "$DataFolder"  -Recurse -Force
+
+# Datencopy von Musik
+Copy-Item -Path "$env:USERPROFILE\Music" -Destination "$DataFolder" -Recurse -Force
+
+# Datencopy von  Desktop
+Copy-Item -Path "$env:USERPROFILE\Desktop" -Destination "$DataFolder" -Recurse -Force
+
+# Datencopy von Bilder
+Copy-Item -Path "$env:USERPROFILE\Pictures" -Destination "$DataFolder" -Recurse -Force
+
+# Datencopy von Download
+Copy-Item -Path "$env:USERPROFILE\Downloads" -Destination "$DataFolder" -Recurse -Force
+
+#Diese 3 zeilen sind beinhaltet, da aktuell aus noch unbekannten Gründen, im Documents Ordner erstellt.
+#Diese heissen wie folgt: Eigene Bilder | Eigene Musik | Eingene Videos
+#Loeschen von den "nicht Existierenden" Ordner
+Remove-Item "$DataFolder\Documents\Eigene Bilder"
+Remove-Item "$DataFolder\Documents\Eigene Musik"
+Remove-Item "$DataFolder\Documents\Eigene Videos"
+
+
+#Hier kommt die ganze Protokollierung
+# Protokollierung für die User, wenn es durchgeführt worden ist
+Add-Content -Path "$DataFolder\CopyLog.txt" -Value "Daten erfolgreich transferiert am $GetDate"
+
+Write-Host "Backup abgeschlossen. Backup-Ordner: "$DataFolder""
+
+
+# Erstelle das Verzeichnis, wenn es nicht existiert, mit dem Namen des User
+New-Item -ItemType Directory -Force -Path $LogData
+
+# Protokollierung für uns Administratoren, wenn es durchgeführt worden ist
+Add-Content -Path "$LogData\CopyLog.txt" -Value "Die Daten von dem User: $env:USERNAME wurden erfolgreich transferiert am $GetDate"
+
+Write-Host "Backup abgeschlossen. Backup-Ordner: "$LogData""
