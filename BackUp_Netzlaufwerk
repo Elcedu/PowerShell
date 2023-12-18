@@ -1,0 +1,35 @@
+#Version 0.1
+#
+#backup_Netzlaufwerk_1_0, Cedric Bühler, 13.11.2023
+# Backup-Skript für Windows Server mit Netzlaufwerk
+
+# SQL Server Instanz und Datenbankinformationen
+$serverInstance = "SVR3\Modul_143"
+$database = "Modul_143"
+
+# Netzlaufwerk für die Backups
+$backupNetworkPath = "\\192.168.1.44\ibzUser\SVR3\Backup"
+
+# Datum für den Backup-Ordner erstellen
+$dateStamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$backupFolder = "$backupNetworkPath\Backup_$dateStamp"
+
+# Erstelle das Backup-Verzeichnis, wenn es nicht existiert
+New-Item -ItemType Directory -Force -Path $backupFolder
+
+# Vollständiges Systemstatus-Backup (mit Windows Server Backup)
+wbadmin start systemstatebackup -backupTarget:$backupFolder
+
+# Dateisicherung für die Webseite
+Copy-Item -Path "C:\inetpub" -Destination $backupFolder -Recurse -Force
+
+# Dateisicherung für der SQL Tabellen
+Copy-Item -Path "C:\Program Files\Microsoft SQL Server\MSSQL15.MODUL_143\MSSQL\DATA" -Destination $backupFolder -Recurse -Force
+
+# Sicherung des geteilten Ordners
+Copy-Item -Path "F:\ICT-Daten" -Destination $backupFolder -Recurse -Force
+
+# Protokollierung
+Add-Content -Path "$backupFolder\BackupLog.txt" -Value "Backup erfolgreich am $(Get-Date)"
+
+Write-Host "Backup abgeschlossen. Backup-Ordner: $backupFolder"
