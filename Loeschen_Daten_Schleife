@@ -33,7 +33,7 @@ New-Item -ItemType Directory -Force -Path $LogFolder
 #-----------------------------------------------
 
 # Benutzernamen abfragen
-$Bname = Get-ChildItem -Name
+$Bname = Get-ChildItem -Name -Directory
 
 #-----------------------------------------------
 #Starten von der Aufnahme für Command-Line-Ausgabe
@@ -41,7 +41,7 @@ start-transcript "$LogData"
 
 #-----------------------------------------------
 #Schleife für die User
-ForEach ($AusName in $BPfad){
+ForEach ($AusName in $Bname){
 
 #-----------------------------------------------
 #Pfad von den Ordner
