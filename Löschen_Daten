@@ -1,0 +1,69 @@
+# Skript für Daten löschung von den Service Worker\CacheStorage die in AppData versteckt sind
+# Es ist alles mit Variablen erstellt, so dass man im Skript nichts anpassen muss sondern nur bei den Variablen die Anpassungen machen kann.
+#Version 1.0
+#Loeschen_von_Daten_1_0 , Autor Cedric Bühler, Erstellt: 15.12.2023
+
+#-----------------------------------------------
+#Variablen setzten
+
+#Userprofil Pfad 
+$UPfad = $($env:UserProfile)
+
+#-----------------------------------------------
+#Pfad von den Ordner
+#Chrome Pfad
+$ChromePath = "AppData\Local\Google\Chrome\User Data\Default\Service Worker\CacheStorage\*"
+#Opera Pfad
+$OperaPath = "AppData\Roaming\Opera Software\Opera GX Stable\Service Worker\CacheStorage\*"
+#Edge Pfad
+$EdgePath = "AppData\Local\Microsoft\Edge\User Data\Default\Service Worker\CacheStorage\*"
+
+#-----------------------------------------------
+#Variable für die Texte
+
+#Text, wenn der Ordner vorhanden ist oder Inhalt vorhanden ist bei Chrome
+$ChromeFolderTrue = "Der Inhalt vom CacheStorage von Chrome wurde gelöscht"
+
+#Text, wenn der Ordner vorhanden ist oder Inhalt vorhanden ist bei Chrome
+$OperaFolderTrue = "Der Inhalt vom CacheStorage von Opera wurde gelöscht"
+
+#Text, wenn der Ordner vorhanden ist oder Inhalt vorhanden ist bei Chrome
+$EdgeFolderTrue = "Der Inhalt vom CacheStorage von Edge wurde gelöscht"
+
+#Text, wenn der Ordner nicht vorhanden ist oder keinen Inhalt vorhanden ist
+$ChromeFolderFalse = "Der Ordner von Chrome ist nicht vorhanden oder ist Leer"
+
+#Text, wenn der Ordner nicht vorhanden ist oder keinen Inhalt vorhanden ist
+$OperaFolderFalse = "Der Ordner vom Opera ist nicht vorhanden oder ist Leer"
+
+#Text, wenn der Ordner nicht vorhanden ist oder keinen Inhalt vorhanden ist
+$EdgeFolderFalse = "Der Ordner vom Edge ist nicht vorhanden oder ist Leer"
+
+#-----------------------------------------------
+#Testen ob der Pfad vorhanden ist
+if ( Test-Path $UPfad\$ChromePath )
+{
+    Write-Output "$ChromeFolderTrue"
+
+#löschen von CacheStorage / Chrome (Local)
+Remove-Item -Path $UPfad\$ChromePath -r -Force
+}
+else {Write-Host "$ChromeFolderFalse"}
+
+#Testen ob der Pfad vorhanden ist
+if ( Test-Path $UPfad\$OperaPath )
+{
+    Write-Output "$OperaFolderTrue"
+#löschen von CacheStorage / Opera (Romaning)
+Remove-Item -Path $UPfad\$OperaPath -r -Force
+}
+else{Write-Host "$OperaFolderFalse"}
+
+#Testen ob der Pfad vorhanden ist
+if ( Test-Path $UPfad\$EdgePath )
+{
+    Write-Output "$EdgeFolderTrue"
+#löschen von CacheStorage / Opera (Romaning)
+Remove-Item -Path $UPfad\$EdgePath -r -Force
+}
+else{Write-Host "$EdgeFolderFalse"}
